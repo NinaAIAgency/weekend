@@ -29,6 +29,10 @@ function currentWorkspaceFromPath(pathname: string, nav: NavData): string | null
 }
 
 const letter = (name: string) => name.replace(/[^\p{L}\p{N}]/gu, "").charAt(0).toUpperCase();
+/** Workspace thumbnail: first letter on the workspace colour (sidebar button and switcher). */
+const WsBadge = ({ name, color }: { name: string; color: string | null }) => (
+  <span className={styles.wsBadge} style={{ background: color ?? "#0073ea" }} aria-hidden>{letter(name)}</span>
+);
 
 export function Sidebar({ nav, collapsed }: { nav: NavData; collapsed: boolean }) {
   const t = useT();
@@ -64,7 +68,7 @@ export function Sidebar({ nav, collapsed }: { nav: NavData; collapsed: boolean }
   const workspaceMenu: MenuEntry[] = wsGroups.flatMap((g, i) => [
     ...(i > 0 ? [{ key: `ws-divider-${i}`, divider: true }] : []),
     ...(hasCategories ? [{ key: `ws-group-${i}`, title: g.category ?? t("chrome.wsCategoryNone") }] : []),
-    ...g.workspaces.map((w) => ({ key: w.id, label: w.name, active: w.id === ws?.id, testId: `workspace-option-${w.name}`, onClick: () => select(w.id) })),
+    ...g.workspaces.map((w) => ({ key: w.id, label: w.name, icon: <WsBadge name={w.name} color={w.color} />, active: w.id === ws?.id, testId: `workspace-option-${w.name}`, onClick: () => select(w.id) })),
   ]);
   const activeBoardId = /^\/boards\/(\d+)/.exec(pathname)?.[1] ?? null;
   const favorites = nav.favorites.map((id) => nav.boards.find((b) => b.id === id)).filter(Boolean) as NavData["boards"];
@@ -93,7 +97,7 @@ export function Sidebar({ nav, collapsed }: { nav: NavData; collapsed: boolean }
         <div className={styles.wsRow}>
           <div className={styles.wsSelect} data-testid="workspace-select">
             <button type="button" className={styles.wsButton} onClick={(e) => setWsEl(wsEl ? null : e.currentTarget)} aria-label={t("shell.workspaces")} aria-haspopup="menu" data-testid="workspace-select-button">
-              {ws && <span className={styles.wsBadge} style={{ background: ws.color ?? "#0073ea" }}>{letter(ws.name)}</span>}
+              {ws && <WsBadge name={ws.name} color={ws.color} />}
               <span className={styles.wsName} data-testid="workspace-select-name">{ws?.name ?? t("shell.workspaces")}</span>
               <DropdownChevronDown size={18} />
             </button>

@@ -31,13 +31,14 @@ describe("groupWorkspaces", () => {
     { id: "5", name: "Support", category: "" },
   ];
 
-  it("groups case-insensitively, sorts categories and puts uncategorised last, keeping order within a group", () => {
-    expect(groupWorkspaces(list).map((g) => [g.category, g.workspaces.map((w) => w.id)])).toEqual([
-      ["Intern", ["3"]],
+  it("groups case-insensitively, puts Klanten first, sorts the rest and puts uncategorised last, keeping order within a group", () => {
+    expect(groupWorkspaces([...list, { id: "6", name: "Archief", category: "Archief" }]).map((g) => [g.category, g.workspaces.map((w) => w.id)])).toEqual([
       ["Klanten", ["2", "4"]],
+      ["Archief", ["6"]],
+      ["Intern", ["3"]],
       [null, ["1", "5"]],
     ]);
-    expect(workspaceCategories(list)).toEqual(["Intern", "Klanten"]);
+    expect(workspaceCategories(list)).toEqual(["Klanten", "Intern"]);
   });
 
   it("returns one uncategorised group when nothing has a category", () => {

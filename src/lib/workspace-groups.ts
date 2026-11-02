@@ -1,5 +1,13 @@
 /** Grouping of workspaces by their free-text `category` for the workspace switcher. */
 
+/** Categories that always come first in the switcher (matched case-insensitively), in this order. */
+export const PINNED_CATEGORIES = ["klanten", "clients"];
+
+const pinRank = (label: string) => {
+  const i = PINNED_CATEGORIES.indexOf(label.toLocaleLowerCase("nl"));
+  return i === -1 ? PINNED_CATEGORIES.length : i;
+};
+
 export interface WorkspaceGroup<W> {
   /** Display label of the category (first spelling seen); null = workspaces without a category. */
   category: string | null;
@@ -7,8 +15,9 @@ export interface WorkspaceGroup<W> {
 }
 
 /**
- * Groups workspaces by category. Categories match case-insensitively and are
- * sorted alphabetically; workspaces without a category come last. Within a
+ * Groups workspaces by category. Categories match case-insensitively; pinned
+ * categories ("Klanten"/"Clients") come first, the others alphabetically after
+ * them, and workspaces without a category come last. Within a
  * group the incoming order (position) is kept.
  */
 export function groupWorkspaces<W extends { category?: string | null }>(list: W[]): WorkspaceGroup<W>[] {
@@ -22,7 +31,8 @@ export function groupWorkspaces<W extends { category?: string | null }>(list: W[
     if (g) g.workspaces.push(w);
     else groups.set(key, { category: label, workspaces: [w] });
   }
-  const sorted = [...groups.values()].sort((a, b) => a.category!.localeCompare(b.category!, "nl", { sensitivity: "base" }));
+  const sorted = [...groups.values()].sort((a, b) =>
+    pinRank(a.category!) - pinRank(b.category!) || a.category!.localeCompare(b.category!, "nl", { sensitivity: "base" }));
   return rest.length ? [...sorted, { category: null, workspaces: rest }] : sorted;
 }
 
