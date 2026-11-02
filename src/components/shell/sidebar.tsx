@@ -9,6 +9,7 @@ import { ActionMenu, type MenuEntry } from "@/components/board/ui/menu";
 import type { NavData } from "@/lib/board-types";
 import { useT } from "@/lib/i18n/client";
 import { usePersistentState } from "@/lib/use-persistent-state";
+import { groupWorkspaces } from "@/lib/workspace-groups";
 import { isNavActive, navFor } from "./nav-registry";
 import styles from "./sidebar.module.css";
 import { useSidebarActions } from "./sidebar-actions";
@@ -57,6 +58,14 @@ export function Sidebar({ nav, collapsed }: { nav: NavData; collapsed: boolean }
   const select = (id: string) => setStored(id);
   const actions = useSidebarActions(select);
   const ws = nav.workspaces.find((w) => w.id === selectedId) ?? null;
+  // Workspaces grouped by category (alphabetical, uncategorised last); a flat list when nobody uses categories.
+  const wsGroups = groupWorkspaces(nav.workspaces);
+  const hasCategories = wsGroups.some((g) => g.category);
+  const workspaceMenu: MenuEntry[] = wsGroups.flatMap((g, i) => [
+    ...(i > 0 ? [{ key: `ws-divider-${i}`, divider: true }] : []),
+    ...(hasCategories ? [{ key: `ws-group-${i}`, title: g.category ?? t("chrome.wsCategoryNone") }] : []),
+    ...g.workspaces.map((w) => ({ key: w.id, label: w.name, active: w.id === ws?.id, testId: `workspace-option-${w.name}`, onClick: () => select(w.id) })),
+  ]);
   const activeBoardId = /^\/boards\/(\d+)/.exec(pathname)?.[1] ?? null;
   const favorites = nav.favorites.map((id) => nav.boards.find((b) => b.id === id)).filter(Boolean) as NavData["boards"];
   const topItems = navFor("sidebar-top", user.role);
@@ -92,7 +101,7 @@ export function Sidebar({ nav, collapsed }: { nav: NavData; collapsed: boolean }
               <ActionMenu
                 anchorEl={wsEl}
                 onClose={() => setWsEl(null)}
-                items={nav.workspaces.map((w) => ({ key: w.id, label: w.name, active: w.id === ws?.id, testId: `workspace-option-${w.name}`, onClick: () => select(w.id) }))}
+                items={workspaceMenu}
               />
             ) : null}
           </div>

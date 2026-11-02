@@ -72,5 +72,5 @@ export interface BoardFull {
 /** Item as seen by the sidebar (nav tree). */
 export interface NavBoard { id: string; name: string; workspaceId: string; folderId: string | null; kind: BoardDto["kind"] }
 export interface NavFolder { id: string; workspaceId: string; parentFolderId: string | null; name: string }
-export interface NavWorkspace { id: string; name: string; kind: "open" | "closed"; color: string | null; icon: string | null }
+export interface NavWorkspace { id: string; name: string; kind: "open" | "closed"; color: string | null; icon: string | null; category: string | null }
 export interface NavData { workspaces: NavWorkspace[]; folders: NavFolder[]; boards: NavBoard[]; favorites: string[] }

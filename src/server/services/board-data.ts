@@ -55,7 +55,7 @@ export function getNavData(actor: Actor): NavData {
   const fl = wsIds.length ? db.select().from(folders).where(inArray(folders.workspaceId, wsIds)).orderBy(asc(folders.position)).all() : [];
   const bs = boards.list(actor);
   return {
-    workspaces: ws.map((w) => ({ id: w.id, name: w.name, kind: w.kind, color: w.color, icon: w.icon })),
+    workspaces: ws.map((w) => ({ id: w.id, name: w.name, kind: w.kind, color: w.color, icon: w.icon, category: w.category })),
     folders: fl.map((f) => ({ id: f.id, workspaceId: f.workspaceId, parentFolderId: f.parentFolderId, name: f.name })),
     boards: bs.map((b) => ({ id: b.id, name: b.name, workspaceId: b.workspaceId, folderId: b.folderId, kind: b.kind })),
     favorites: boards.listFavorites(actor).map((b) => b.id),

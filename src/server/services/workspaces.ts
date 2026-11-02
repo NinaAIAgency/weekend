@@ -17,6 +17,8 @@ const createSchema = z.object({
   kind: z.enum(["open", "closed"]).default("open"),
   color: z.string().max(20).nullish(),
   icon: z.string().max(60).nullish(),
+  /** Groups workspaces in the switcher. Blank -> null (no category). */
+  category: z.string().trim().max(60).nullish().transform((v) => (v ? v : null)),
 });
 const updateSchema = createSchema.partial();
 
