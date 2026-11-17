@@ -1,6 +1,6 @@
 # Weekend
 
-Weekend is an open-source work OS for teams: workspaces, boards and items with rich column types, table / kanban / timeline / calendar / gantt views, dashboards, automations, docs, forms, dev sprints, time tracking, an AI Sidekick, a GraphQL API and an MCP server for AI assistants.
+Weekend! is an open-source work OS for teams: workspaces, boards and items with rich column types, table / kanban / timeline / calendar / gantt views, dashboards, automations, docs, forms, dev sprints, time tracking, an AI Sidekick, a GraphQL API and an MCP server for AI assistants.
 
 It runs on your own computer (macOS, Windows or Linux) with only Node.js. No Docker, no cloud account.
 
